@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 2c8cb533d882fe146b0a21fb010534df
+DefaultImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 200856
+  packageName: Rope Tool
+  packageVersion: 1.0
+  assetPath: Assets/Houdini_Rope_tool/HE_Rope_Tool.hda
+  uploadId: 447449
