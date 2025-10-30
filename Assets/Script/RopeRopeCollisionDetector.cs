@@ -1,6 +1,8 @@
+using Obi;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
-using Obi;
+using UnityEngine.UIElements;
 
 [RequireComponent(typeof(ObiSolver))]
 public class RopeRopeCollisionDetector : MonoBehaviour
@@ -23,7 +25,8 @@ public class RopeRopeCollisionDetector : MonoBehaviour
 
     public UnityEvent<ActorPair> callback;
     ObiSolver solver;
-
+    private readonly HashSet<ObiRope> currentFrameRopes = new();
+    public int LastUpdateFrame { get; private set; } = -1;
     void Awake()
     {
         solver = GetComponent<Obi.ObiSolver>();
@@ -39,12 +42,14 @@ public class RopeRopeCollisionDetector : MonoBehaviour
     void OnDisable()
     {
         solver.OnParticleCollision -= Solver_OnCollision;
+        currentFrameRopes.Clear();
+        LastUpdateFrame = -1;
     }
 
     void Solver_OnCollision(object sender, ObiNativeContactList e)
     {
         if (!solver.initialized || callback == null) return;
-        
+        currentFrameRopes.Clear();
         // just iterate over all contacts in the current frame:
         foreach (Oni.Contact contact in e)
         {
@@ -63,14 +68,37 @@ public class RopeRopeCollisionDetector : MonoBehaviour
                 var particleInActorA = solver.particleToActor[particleA];
                 var particleInActorB = solver.particleToActor[particleB];
 
+                ObiSolver.ParticleInActor pa = solver.particleToActor[particleA];
+                ObiSolver.ParticleInActor pb = solver.particleToActor[particleB];
+                
+                if (pa.actor != null && pb.actor != null && pa.actor != pb.actor)
+                {
+                    var ropeA = pa.actor as ObiRope;
+                    var ropeB = pb.actor as ObiRope;
+                    currentFrameRopes.Add(ropeA);
+                    currentFrameRopes.Add(ropeB);
+                }
+                
                 // if they're not the same actor, trigger a callback:
                 if (particleInActorA != null && particleInActorB != null && particleInActorA.actor != particleInActorB.actor)
                 {
                     callback.Invoke(new ActorPair(particleInActorA.actor, particleInActorB.actor, particleA, particleB));
-                    Debug.LogError("Collision detected between ropes.");
+                    Debug.Log("Rope Dectect");
                 }
             }
         }
+        LastUpdateFrame = Time.frameCount;
     }
-
+    public List<ObiRope> GetCollidingRopes()
+    {
+        return new List<ObiRope>(currentFrameRopes);
+    }
+    public void GetNotCollidingFromSample(IList<ObiRope> sample, List<ObiRope> output)
+    {
+        output.Clear();
+        foreach (var r in sample)
+            if (r != null && !currentFrameRopes.Contains(r))
+                output.Add(r);
+    }
+    public bool IsRopeColliding(ObiRope rope) => rope != null && currentFrameRopes.Contains(rope);
 }

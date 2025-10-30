@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Experimental.GlobalIllumination;
+using UnityEngine.UIElements;
 
 [ExecuteAlways]
 public class GridPlane : MonoBehaviour
@@ -14,6 +16,12 @@ public class GridPlane : MonoBehaviour
     public Vector3 origin = Vector3.zero;
     public bool showGizmos = true;
 
+    [Header("Visuals")]
+    public bool showInScene = true;
+    public bool showInGame = true;
+    public Color lineColor = new Color(1, 1, 1, 0.25f);
+
+    private Material lineMat;
     [Header("Occupancy (chống trùng ô)")]
     public bool enforceUniqueAnchors = true;
 
@@ -22,6 +30,18 @@ public class GridPlane : MonoBehaviour
 
     void OnEnable() => Instance = this;
     void OnDisable() { if (Instance == this) Instance = null; }
+
+    void Start()
+    {
+        Shader shader = Shader.Find("Hidden/Internal-Colored");
+        lineMat = new Material(shader) { hideFlags = HideFlags.HideAndDontSave };
+        lineMat.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+        lineMat.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+        lineMat.SetInt("_Cull", (int)UnityEngine.Rendering.CullMode.Off);
+        lineMat.SetInt("_ZWrite", 0);
+        lineMat.SetInt("_ZTest", (int)UnityEngine.Rendering.CompareFunction.Always); // 👈 vẽ đè lên trên
+
+    }
 
     public Vector2Int WorldToCell(Vector3 world)
     {
@@ -95,5 +115,35 @@ public class GridPlane : MonoBehaviour
         Vector3 p3 = start + new Vector3(0, 0, height * cellSize);
         Gizmos.DrawLine(p0, p1); Gizmos.DrawLine(p1, p2);
         Gizmos.DrawLine(p2, p3); Gizmos.DrawLine(p3, p0);
+    }
+    void OnRenderObject()
+    {
+        if (!showInGame || !Application.isPlaying || lineMat == null)
+            return;
+
+        lineMat.SetPass(0);
+        GL.PushMatrix();
+        GL.MultMatrix(Matrix4x4.identity);
+        GL.Begin(GL.LINES);
+        GL.Color(lineColor);
+
+        for (int x = 0; x <= width; x++)
+        {
+            Vector3 start = origin + new Vector3(x * cellSize, yLevel, 0);
+            Vector3 end = origin + new Vector3(x * cellSize, yLevel, height * cellSize);
+            GL.Vertex(start);
+            GL.Vertex(end);
+        }
+
+        for (int z = 0; z <= height; z++)
+        {
+            Vector3 start = origin + new Vector3(0, yLevel, z * cellSize);
+            Vector3 end = origin + new Vector3(width * cellSize, yLevel, z * cellSize);
+            GL.Vertex(start);
+            GL.Vertex(end);
+        }
+
+        GL.End();
+        GL.PopMatrix();
     }
 }

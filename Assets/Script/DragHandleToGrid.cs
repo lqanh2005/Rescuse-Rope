@@ -56,6 +56,7 @@ public class DragHandleToGrid : MonoBehaviour
         _dragging = false;
         // thả: snap & reserve cell
         SnapToNearestCell(force: true);
+        RopeCleaner.instance.Check();
     }
 
     void Update()
