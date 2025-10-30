@@ -1,144 +1,99 @@
-using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine;
 
 [ExecuteAlways]
 public class GridPlane : MonoBehaviour
 {
-    [Header("Kích thước lưới (số ô)")]
-    public int cellsX = 10;
-    public int cellsZ = 10;
+    public static GridPlane Instance { get; private set; }
 
-    [Header("Kích thước mỗi ô (m)")]
-    public float cellSize = 0.25f;
+    [Header("Grid Settings")]
+    public float cellSize = 0.5f;
+    public int width = 20;
+    public int height = 20;
+    public float yLevel = 0f;           // mặt phẳng ngang Y = yLevel
+    public Vector3 origin = Vector3.zero;
+    public bool showGizmos = true;
 
-    [Header("Hiển thị Gizmos")]
-    public bool drawGizmos = true;
-    public Color gridColor = new Color(0f, 0f, 0f, 0.25f);
+    [Header("Occupancy (chống trùng ô)")]
+    public bool enforceUniqueAnchors = true;
 
-    Dictionary<Vector2Int, DragHandleToGrid> occupied = new();
-    // Trả về điểm snap gần nhất trên lưới (theo world space)
-    public Vector3 SnapWorldPoint(Vector3 worldPoint)
+    // Lưu chỗ đã có anchor
+    private readonly Dictionary<Vector2Int, Transform> _occupancy = new();
+
+    void OnEnable() => Instance = this;
+    void OnDisable() { if (Instance == this) Instance = null; }
+
+    public Vector2Int WorldToCell(Vector3 world)
     {
-        // Đưa về local theo plane
-        var local = transform.InverseTransformPoint(worldPoint);
-
-        // Lưới nằm trên mặt phẳng local XZ của plane (Y = 0)
-        // Tâm lưới đặt tại origin của plane (bạn có thể offset nếu muốn)
-        float halfX = (cellsX * cellSize) * 0.5f;
-        float halfZ = (cellsZ * cellSize) * 0.5f;
-
-        // Kẹp trong phạm vi lưới (tuỳ bạn: có thể bỏ kẹp nếu muốn ngoài biên vẫn snap)
-        float x = Mathf.Clamp(local.x, -halfX, halfX);
-        float z = Mathf.Clamp(local.z, -halfZ, halfZ);
-
-        // Snap về bội số cellSize
-        x = Mathf.Round(x / cellSize) * cellSize;
-        z = Mathf.Round(z / cellSize) * cellSize;
-
-        // Y luôn = 0 trên plane-local
-        var snappedLocal = new Vector3(x, 0f, z);
-        return transform.TransformPoint(snappedLocal);
+        Vector3 local = world - origin;
+        int cx = Mathf.RoundToInt(local.x / cellSize);
+        int cz = Mathf.RoundToInt(local.z / cellSize);
+        // clamp vào bounds
+        cx = Mathf.Clamp(cx, 0, width - 1);
+        cz = Mathf.Clamp(cz, 0, height - 1);
+        return new Vector2Int(cx, cz);
     }
 
-    // Lấy hit point từ một ray (ScreenPointToRay chẳng hạn) lên plane này
-    public bool RaycastToPlane(Ray ray, out Vector3 hitPoint)
+    public Vector3 CellToWorld(Vector2Int cell)
     {
-        // Plane: pháp tuyến là transform.up, đi qua transform.position
-        Plane p = new Plane(transform.up, transform.position);
-        if (p.Raycast(ray, out float enter))
-        {
-            hitPoint = ray.GetPoint(enter);
-            return true;
-        }
-        hitPoint = Vector3.zero;
-        return false;
+        float x = origin.x + cell.x * cellSize;
+        float z = origin.z + cell.y * cellSize;
+        return new Vector3(x, yLevel, z);
+    }
+
+    public Vector3 Snap(Vector3 world)
+    {
+        return CellToWorld(WorldToCell(world));
+    }
+
+    public bool IsCellFree(Vector2Int cell, Transform requester = null)
+    {
+        if (!enforceUniqueAnchors) return true;
+        if (!_occupancy.TryGetValue(cell, out var t)) return true;
+        return t == null || t == requester;
+    }
+
+    public bool TryReserveCell(Vector2Int cell, Transform who)
+    {
+        if (!enforceUniqueAnchors) return true;
+        if (!IsCellFree(cell, who)) return false;
+        _occupancy[cell] = who;
+        return true;
+    }
+
+    public void ReleaseCell(Vector2Int cell, Transform who)
+    {
+        if (!enforceUniqueAnchors) return;
+        if (_occupancy.TryGetValue(cell, out var t) && t == who)
+            _occupancy.Remove(cell);
     }
 
     void OnDrawGizmos()
     {
-        if (!drawGizmos) return;
+        if (!showGizmos) return;
+        Gizmos.color = new Color(1f, 1f, 1f, 0.2f);
 
-        Gizmos.color = gridColor;
-
-        float halfX = (cellsX * cellSize) * 0.5f;
-        float halfZ = (cellsZ * cellSize) * 0.5f;
-
-        // Vẽ lưới trong local, rồi transform ra world
-        // các trục local trên mặt phẳng:
-        Vector3 origin = transform.position;
-        Vector3 right = transform.right;
-        Vector3 fwd = transform.forward;
-
-        // biên
-        Vector3 min = origin - right * halfX - fwd * halfZ;
-        Vector3 max = origin + right * halfX + fwd * halfZ;
-
-        // đường dọc (theo forward)
-        for (int ix = 0; ix <= cellsX; ix++)
+        Vector3 start = new Vector3(origin.x, yLevel, origin.z);
+        // vẽ ô
+        for (int x = 0; x < width; x++)
         {
-            float x = -halfX + ix * cellSize;
-            Vector3 a = origin + right * x - fwd * halfZ;
-            Vector3 b = origin + right * x + fwd * halfZ;
-            Gizmos.DrawLine(a, b);
+            for (int z = 0; z < height; z++)
+            {
+                Vector3 c = start + new Vector3(x * cellSize, 0, z * cellSize);
+                Vector3 a = c;
+                Vector3 b = c + new Vector3(cellSize, 0, 0);
+                Vector3 d = c + new Vector3(0, 0, cellSize);
+                Gizmos.DrawLine(a, b);
+                Gizmos.DrawLine(a, d);
+            }
         }
-        // đường ngang (theo right)
-        for (int iz = 0; iz <= cellsZ; iz++)
-        {
-            float z = -halfZ + iz * cellSize;
-            Vector3 a = origin - right * halfX + fwd * z;
-            Vector3 b = origin + right * halfX + fwd * z;
-            Gizmos.DrawLine(a, b);
-        }
-    }
-    Vector2Int WorldToCell(Vector3 worldPoint)
-    {
-        var local = transform.InverseTransformPoint(worldPoint);
-        int cx = Mathf.RoundToInt(local.x / cellSize);
-        int cz = Mathf.RoundToInt(local.z / cellSize);
-        return new Vector2Int(cx, cz);
-    }
-    Vector3 CellToWorld(Vector2Int cell)
-    {
-        var local = new Vector3(cell.x * cellSize, 0f, cell.y * cellSize);
-        return transform.TransformPoint(local);
-    }
-
-    public bool IsOccupied(Vector3 worldSnapped, out DragHandleToGrid owner)
-    {
-        var c = WorldToCell(worldSnapped);
-        return occupied.TryGetValue(c, out owner);
-    }
-    public void ReserveOccupancyAt(Vector3 worldSnapped, DragHandleToGrid who)
-    {
-        var c = WorldToCell(worldSnapped);
-        occupied[c] = who;
-    }
-    public void ReleaseOccupancyAt(Vector3 worldPos, DragHandleToGrid who)
-    {
-        var c = WorldToCell(worldPos);
-        if (occupied.TryGetValue(c, out var curr) && curr == who)
-            occupied.Remove(c);
-    }
-
-    // tìm ô trống gần nhất quanh 1 vị trí snap (xoắn ốc nhỏ)
-    public Vector3 FindNearestFree(Vector3 nearWorldSnapped, int searchRadius = 3)
-    {
-        var c0 = WorldToCell(nearWorldSnapped);
-        if (!occupied.ContainsKey(c0)) return nearWorldSnapped;
-
-        for (int r = 1; r <= searchRadius; r++)
-        {
-            for (int dz = -r; dz <= r; dz++)
-                for (int dx = -r; dx <= r; dx++)
-                {
-                    // chỉ lấy “biên” hình vuông bán kính r
-                    if (Mathf.Abs(dx) != r && Mathf.Abs(dz) != r) continue;
-                    var c = new Vector2Int(c0.x + dx, c0.y + dz);
-                    if (!occupied.ContainsKey(c))
-                        return CellToWorld(c);
-                }
-        }
-        // hết chỗ → trả về cũ
-        return CellToWorld(c0);
+        // viền ngoài
+        Gizmos.color = new Color(1f, 1f, 1f, 0.35f);
+        Vector3 p0 = start;
+        Vector3 p1 = start + new Vector3(width * cellSize, 0, 0);
+        Vector3 p2 = start + new Vector3(width * cellSize, 0, height * cellSize);
+        Vector3 p3 = start + new Vector3(0, 0, height * cellSize);
+        Gizmos.DrawLine(p0, p1); Gizmos.DrawLine(p1, p2);
+        Gizmos.DrawLine(p2, p3); Gizmos.DrawLine(p3, p0);
     }
 }

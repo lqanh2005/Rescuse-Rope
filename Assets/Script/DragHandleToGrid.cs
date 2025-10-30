@@ -1,90 +1,162 @@
 using UnityEngine;
-using UnityEngine.EventSystems;
 
-[RequireComponent(typeof(Rigidbody), typeof(Collider))]
+[RequireComponent(typeof(Collider))]
 public class DragHandleToGrid : MonoBehaviour
 {
-    public Camera cam;
-    public GridPlane grid;
-    public bool snapWhileDragging = true;
+    [Header("Dragging Plane")]
+    public Vector3 planeNormal = Vector3.up; // kéo trên mặt phẳng ngang
+    public float catchRadius = 0.001f;       // ổn định tính toán
 
-    static DragHandleToGrid active;      // khoá kéo toàn cục
-    Rigidbody rb;
-    Collider col;
-    bool dragging;
+    Plane _plane;
+    bool _dragging;
+    Vector3 _grabOffset;
+    Vector2Int _currentCell;
+    bool _hasCell;
 
-    void Awake()
+    void Start()
     {
-        rb = GetComponent<Rigidbody>();
-        rb.isKinematic = true;
-        col = GetComponent<Collider>();
+        var grid = GridPlane.Instance;
+        if (grid == null)
+        {
+            Debug.LogError("Grid3D not found in scene. Add Grid3D first.");
+            enabled = false; return;
+        }
+        // khởi tạo plane đi qua yLevel
+        Vector3 planePoint = new Vector3(transform.position.x, grid.yLevel, transform.position.z);
+        _plane = new Plane(planeNormal, planePoint);
+
+        // Đặt anchor vào cell gần nhất lúc start
+        SnapToNearestCell(force: true);
+    }
+
+    void OnMouseDown()
+    {
+        if (GridPlane.Instance == null) return;
+
+        // plane update theo yLevel hiện tại
+        var grid = GridPlane.Instance;
+        Vector3 planePoint = new Vector3(transform.position.x, grid.yLevel, transform.position.z);
+        _plane = new Plane(planeNormal, planePoint);
+
+        var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        if (_plane.Raycast(ray, out float enter))
+        {
+            var hit = ray.GetPoint(enter);
+            _grabOffset = transform.position - hit;
+            _dragging = true;
+
+            // giải phóng cell hiện tại (để có thể quét qua cell khác)
+            if (_hasCell)
+                grid.ReleaseCell(_currentCell, transform);
+        }
+    }
+
+    void OnMouseUp()
+    {
+        _dragging = false;
+        // thả: snap & reserve cell
+        SnapToNearestCell(force: true);
     }
 
     void Update()
     {
-        if (Input.GetMouseButtonDown(0)) TryBeginDrag();
-        if (Input.GetMouseButtonUp(0)) EndDrag();
+        if (!_dragging || GridPlane.Instance == null) return;
 
-        if (dragging) DragUpdate();
+        var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        if (_plane.Raycast(ray, out float enter))
+        {
+            var hit = ray.GetPoint(enter);
+            Vector3 target = hit + _grabOffset;
+
+            // giữ ở đúng yLevel
+            target.y = GridPlane.Instance.yLevel;
+
+            // Snap “thử” để xem cell có rảnh không
+            Vector2Int cell = GridPlane.Instance.WorldToCell(target);
+            if (GridPlane.Instance.IsCellFree(cell, transform))
+            {
+                Vector3 snapped = GridPlane.Instance.CellToWorld(cell);
+                transform.position = snapped;
+                _currentCell = cell;
+                _hasCell = true;
+            }
+            else
+            {
+                // nếu cell đang bị chiếm, cứ hiển thị vị trí “gần đúng” (không snap),
+                // player kéo thêm một chút sẽ rơi vào cell khác trống.
+                transform.position = target;
+                _hasCell = false;
+            }
+        }
     }
 
-    void TryBeginDrag()
+    void SnapToNearestCell(bool force)
     {
-        if (active != null) return;                        // đã có handle khác đang kéo
-        if (cam == null || grid == null) return;
-        if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject()) return;
+        var grid = GridPlane.Instance;
+        if (grid == null) return;
 
-        Ray ray = cam.ScreenPointToRay(Input.mousePosition);
-
-        // 1) chỉ bắt đầu nếu bắn trúng collider CHÍNH MÌNH
-        if (Physics.Raycast(ray, out RaycastHit hit, 1000f))
+        Vector2Int cell = grid.WorldToCell(transform.position);
+        if (force)
         {
-            if (hit.collider != col) return;               // không trúng mình → bỏ
+            // bắt buộc ghim vào cell hợp lệ gần nhất (nếu đang enforce unique thì thử trước)
+            if (grid.IsCellFree(cell, transform) && grid.TryReserveCell(cell, transform))
+            {
+                transform.position = grid.CellToWorld(cell);
+                _currentCell = cell; _hasCell = true;
+            }
+            else
+            {
+                // tìm cell lân cận trống
+                if (FindNearestFreeCell(cell, out var free))
+                {
+                    grid.TryReserveCell(free, transform);
+                    transform.position = grid.CellToWorld(free);
+                    _currentCell = free; _hasCell = true;
+                }
+                else
+                {
+                    // không tìm thấy cell trống, giữ nguyên (trường hợp hiếm)
+                    _hasCell = false;
+                }
+            }
         }
-        else return;
-
-        // 2) phải raycast được xuống đúng plane làm việc (không thì bỏ)
-        if (!grid.RaycastToPlane(ray, out _)) return;
-
-        dragging = true;
-        active = this;
-
-        // (tuỳ chọn) giải phóng ô cũ để người khác có thể chiếm
-        grid.ReleaseOccupancyAt(transform.position, this);
+        else
+        {
+            transform.position = grid.CellToWorld(cell);
+            _currentCell = cell; _hasCell = true;
+        }
     }
 
-    void DragUpdate()
+    bool FindNearestFreeCell(Vector2Int from, out Vector2Int freeCell)
     {
-        Ray ray = cam.ScreenPointToRay(Input.mousePosition);
-        if (!grid.RaycastToPlane(ray, out Vector3 hit)) return;
-
-        Vector3 target = snapWhileDragging ? grid.SnapWorldPoint(hit) : hit;
-
-        // nếu snap khi kéo, đừng cho “đè” lên ô đã có người
-        if (snapWhileDragging && grid.IsOccupied(target, out var owner) && owner != this)
+        var grid = GridPlane.Instance;
+        int maxR = Mathf.Max(grid.width, grid.height);
+        for (int r = 0; r <= maxR; r++)
         {
-            target = grid.FindNearestFree(target);
+            for (int dx = -r; dx <= r; dx++)
+            {
+                int dz = r - Mathf.Abs(dx);
+                // 4 điểm trên kim cương Manhattan
+                TryCell(from + new Vector2Int(dx, dz), out var found1);
+                if (found1) { freeCell = from + new Vector2Int(dx, dz); return true; }
+                if (dz != 0)
+                {
+                    TryCell(from + new Vector2Int(dx, -dz), out var found2);
+                    if (found2) { freeCell = from + new Vector2Int(dx, -dz); return true; }
+                }
+            }
         }
+        freeCell = default; return false;
 
-        rb.MovePosition(target);
+        void TryCell(Vector2Int c, out bool ok)
+        {
+            ok = c.x >= 0 && c.x < grid.width && c.y >= 0 && c.y < grid.height && grid.IsCellFree(c, transform);
+        }
     }
 
-    void EndDrag()
+    void OnDisable()
     {
-        if (!dragging) return;
-        dragging = false;
-        if (active == this) active = null;
-
-        // Snap cuối + giữ chỗ
-        Ray ray = cam.ScreenPointToRay(Input.mousePosition);
-        if (grid.RaycastToPlane(ray, out Vector3 hit))
-        {
-            Vector3 cell = grid.SnapWorldPoint(hit);
-            if (grid.IsOccupied(cell, out var owner) && owner != this)
-                cell = grid.FindNearestFree(cell);
-
-            rb.MovePosition(cell);
-            grid.ReserveOccupancyAt(cell, this);
-        }
+        if (_hasCell && GridPlane.Instance != null)
+            GridPlane.Instance.ReleaseCell(_currentCell, transform);
     }
 }

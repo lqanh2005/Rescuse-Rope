@@ -888,10 +888,12 @@ namespace Obi
             abstraction.externalTorques.Upload();
 
             // copy end to start positions.
-            abstraction.startPositions.CopyFrom(abstraction.endPositions);            abstraction.startOrientations.CopyFrom(abstraction.endOrientations);
+            abstraction.startPositions.CopyFrom(abstraction.endPositions);
+            abstraction.startOrientations.CopyFrom(abstraction.endOrientations);
 
             // now that we got position / orientation data in the CPU set them as this step's end positions / orientations.
-            abstraction.endPositions.CopyFrom(abstraction.positions);            abstraction.endOrientations.CopyFrom(abstraction.orientations);
+            abstraction.endPositions.CopyFrom(abstraction.positions);
+            abstraction.endOrientations.CopyFrom(abstraction.orientations);
 
             abstraction.startPositions.Upload(true);
             abstraction.startOrientations.Upload(true);
@@ -901,23 +903,28 @@ namespace Obi
 
         public IObiJobHandle CollisionDetection(IObiJobHandle inputDeps, float stepTime)
         {
-            var collisionParameters = abstraction.GetConstraintParameters(Oni.ConstraintType.Collision);            var particleCollisionParameters = abstraction.GetConstraintParameters(Oni.ConstraintType.ParticleCollision);            var densityParameters = abstraction.GetConstraintParameters(Oni.ConstraintType.Density);
+            var collisionParameters = abstraction.GetConstraintParameters(Oni.ConstraintType.Collision);
+            var particleCollisionParameters = abstraction.GetConstraintParameters(Oni.ConstraintType.ParticleCollision);
+            var densityParameters = abstraction.GetConstraintParameters(Oni.ConstraintType.Density);
 
             if (particleCollisionParameters.enabled ||
-                densityParameters.enabled)            {
+                densityParameters.enabled)
+            {
                 UpdateFoamDensity();
 
                 UnityEngine.Profiling.Profiler.BeginSample("Build Simplex Grid");
                 particleGrid.BuildGrid(this, stepTime);
                 UnityEngine.Profiling.Profiler.EndSample();
 
-                if (densityParameters.enabled)                {
+                if (densityParameters.enabled)
+                {
                     UnityEngine.Profiling.Profiler.BeginSample("Generate Fluid Neighborhoods");
                     particleGrid.GenerateFluidNeighborhoods(this);
                     UnityEngine.Profiling.Profiler.EndSample();
                 }
 
-                if (particleCollisionParameters.enabled)                {
+                if (particleCollisionParameters.enabled)
+                {
                     UnityEngine.Profiling.Profiler.BeginSample("Generate Particle Contacts");
                     particleGrid.GenerateContacts(this);
                     UnityEngine.Profiling.Profiler.EndSample();
@@ -992,20 +999,60 @@ namespace Obi
         private void ApplyConstraints(float stepTime, float substepTime, int steps, float timeLeft)
         {
             // calculate max amount of iterations required, and initialize constraints..
-            int maxIterations = 0;            for (int i = 0; i < Oni.ConstraintTypeCount; ++i)            {                var parameters = m_Solver.GetConstraintParameters((Oni.ConstraintType)i);                if (parameters.enabled)                {                    maxIterations = Mathf.Max(maxIterations, parameters.iterations);                    constraints[i].Initialize(stepTime, substepTime, steps, timeLeft);                }            }
+            int maxIterations = 0;
+            for (int i = 0; i < Oni.ConstraintTypeCount; ++i)
+            {
+                var parameters = m_Solver.GetConstraintParameters((Oni.ConstraintType)i);
+                if (parameters.enabled)
+                {
+                    maxIterations = Mathf.Max(maxIterations, parameters.iterations);
+                    constraints[i].Initialize(stepTime, substepTime, steps, timeLeft);
+                }
+            }
 
             // calculate iteration paddings:
-            for (int i = 0; i < Oni.ConstraintTypeCount; ++i)            {                var parameters = m_Solver.GetConstraintParameters((Oni.ConstraintType)i);                if (parameters.enabled && parameters.iterations > 0)                    padding[i] = Mathf.CeilToInt(maxIterations / (float)parameters.iterations);                else                    padding[i] = maxIterations;            }
+            for (int i = 0; i < Oni.ConstraintTypeCount; ++i)
+            {
+                var parameters = m_Solver.GetConstraintParameters((Oni.ConstraintType)i);
+                if (parameters.enabled && parameters.iterations > 0)
+                    padding[i] = Mathf.CeilToInt(maxIterations / (float)parameters.iterations);
+                else
+                    padding[i] = maxIterations;
+            }
 
             // perform projection iterations:
-            for (int i = 1; i < maxIterations; ++i)            {                for (int j = 0; j < Oni.ConstraintTypeCount; ++j)                {                    if (j != (int)Oni.ConstraintType.Aerodynamics)                    {                        var parameters = m_Solver.GetConstraintParameters((Oni.ConstraintType)j);                        if (parameters.enabled && i % padding[j] == 0)                            constraints[j].Project(stepTime, substepTime, steps, timeLeft);                    }                }            }
+            for (int i = 1; i < maxIterations; ++i)
+            {
+                for (int j = 0; j < Oni.ConstraintTypeCount; ++j)
+                {
+                    if (j != (int)Oni.ConstraintType.Aerodynamics)
+                    {
+                        var parameters = m_Solver.GetConstraintParameters((Oni.ConstraintType)j);
+                        if (parameters.enabled && i % padding[j] == 0)
+                            constraints[j].Project(stepTime, substepTime, steps, timeLeft);
+                    }
+                }
+            }
 
             // final iteration, all groups together:
-            for (int i = 0; i < Oni.ConstraintTypeCount; ++i)            {                if (i != (int)Oni.ConstraintType.Aerodynamics)                {                    var parameters = m_Solver.GetConstraintParameters((Oni.ConstraintType)i);                    if (parameters.enabled && parameters.iterations > 0)                        constraints[i].Project(stepTime, substepTime, steps, timeLeft);                }            }
+            for (int i = 0; i < Oni.ConstraintTypeCount; ++i)
+            {
+                if (i != (int)Oni.ConstraintType.Aerodynamics)
+                {
+                    var parameters = m_Solver.GetConstraintParameters((Oni.ConstraintType)i);
+                    if (parameters.enabled && parameters.iterations > 0)
+                        constraints[i].Project(stepTime, substepTime, steps, timeLeft);
+                }
+            }
 
             // Despite friction constraints being applied after collision (since coulomb friction depends on normal impulse)
             // we perform a collision iteration right at the end to ensure the final state meets the Signorini-Fichera conditions.
-            var param = m_Solver.GetConstraintParameters(Oni.ConstraintType.ParticleCollision);            if (param.enabled && param.iterations > 0)                constraints[(int)Oni.ConstraintType.ParticleCollision].Project(stepTime, substepTime, steps, timeLeft);            param = m_Solver.GetConstraintParameters(Oni.ConstraintType.Collision);            if (param.enabled && param.iterations > 0)                constraints[(int)Oni.ConstraintType.Collision].Project(stepTime, substepTime, steps, timeLeft);
+            var param = m_Solver.GetConstraintParameters(Oni.ConstraintType.ParticleCollision);
+            if (param.enabled && param.iterations > 0)
+                constraints[(int)Oni.ConstraintType.ParticleCollision].Project(stepTime, substepTime, steps, timeLeft);
+            param = m_Solver.GetConstraintParameters(Oni.ConstraintType.Collision);
+            if (param.enabled && param.iterations > 0)
+                constraints[(int)Oni.ConstraintType.Collision].Project(stepTime, substepTime, steps, timeLeft);
         }
 
         public IObiJobHandle ApplyInterpolation(IObiJobHandle inputDeps, ObiNativeVector4List startPositions, ObiNativeQuaternionList startOrientations, float stepTime, float unsimulatedTime)
@@ -1067,7 +1114,8 @@ namespace Obi
             }
 
             //make sure density constraints are enabled, otherwise particles have no neighbors and neighbor lists will be uninitialized.
-            var param = m_Solver.GetConstraintParameters(Oni.ConstraintType.Density);            if (param.enabled && param.iterations > 0)
+            var param = m_Solver.GetConstraintParameters(Oni.ConstraintType.Density);
+            if (param.enabled && param.iterations > 0)
             {
                 // Fluid laplacian/anisotropy (only if we're in play mode, in-editor we have no particlegrid/sorted data).
                 var d = constraints[(int)Oni.ConstraintType.Density] as ComputeDensityConstraints;
@@ -1263,7 +1311,8 @@ namespace Obi
                 activeFoamParticleCount = 0;
         }
 
-        public void SpatialQuery(ObiNativeQueryShapeList shapes, ObiNativeAffineTransformList transforms, ObiNativeQueryResultList results)        {
+        public void SpatialQuery(ObiNativeQueryShapeList shapes, ObiNativeAffineTransformList transforms, ObiNativeQueryResultList results)
+        {
             if (abstraction.queryResults.count != abstraction.maxQueryResults)
             {
                 abstraction.queryResults.ResizeUninitialized((int)abstraction.maxQueryResults);

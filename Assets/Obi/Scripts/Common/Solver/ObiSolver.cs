@@ -373,6 +373,7 @@ namespace Obi
         [NonSerialized] private ObiNativeQueryShapeList m_QueryShapes;
         [NonSerialized] private ObiNativeAffineTransformList m_QueryTransforms;
         [NonSerialized] private ObiNativeQueryResultList m_QueryResults;
+        public object colliderWorld;
 
         public ISolverImpl implementation { get; private set; }
 

@@ -15,12 +15,12 @@ namespace Obi
 
         [Range(0, 1)]
         [HideInInspector] [SerializeField] private float m_SourceMu;
-
+        [HideInInspector][SerializeField] private float lengthChange = 0;
         public bool direction = true;
 
         ObiStructuralElement m_CursorElement = null;
         private int m_SourceIndex = -1;
-        private float lengthChange = 0;
+        
 
         public float cursorMu
         {
@@ -279,7 +279,7 @@ namespace Obi
             //newLength = Mathf.Clamp(newLength, 0, (rope.sourceBlueprint.particleCount - 1) * rope.ropeBlueprint.interParticleDistance);
 
             // accumulate length change, we'll reset it to zero after it has been applied.
-            this.lengthChange += lengthChange;
+            this.lengthChange = lengthChange;
 
             // return new length:
             return this.lengthChange + rope.restLength;
