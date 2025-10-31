@@ -119,52 +119,47 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &88640194
-GameObject:
+--- !u!21 &46370567
+Material:
+  serializedVersion: 8
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 88640196}
-  - component: {fileID: 88640195}
-  m_Layer: 0
-  m_Name: BurstCollisionWorld
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &88640195
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 88640194}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f1a161c4294214a4fbcb7e9e94800494, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  cellSpans:
-    m_AlignBytes: 16
---- !u!4 &88640196
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 88640194}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_Name: Sprites/Default
+  m_Shader: {fileID: 10753, guid: 0000000000000000f000000000000000, type: 0}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _AlphaTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - PixelSnap: 0
+    - _EnableExternalAlpha: 0
+    m_Colors:
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _Flip: {r: 1, g: 1, b: 1, a: 1}
+    - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1
 --- !u!1 &283647873
 GameObject:
   m_ObjectHideFlags: 0
@@ -267,6 +262,52 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!1 &327672210
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 327672212}
+  - component: {fileID: 327672211}
+  m_Layer: 0
+  m_Name: BurstCollisionWorld
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &327672211
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 327672210}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1a161c4294214a4fbcb7e9e94800494, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cellSpans:
+    m_AlignBytes: 16
+--- !u!4 &327672212
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 327672210}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &396307347
 GameObject:
   m_ObjectHideFlags: 0
@@ -1065,7 +1106,7 @@ Camera:
   m_GameObject: {fileID: 1002464891}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 1
+  m_ClearFlags: 4
   m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0.019607844}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
@@ -2051,6 +2092,7 @@ GameObject:
   - component: {fileID: 1596048982}
   - component: {fileID: 1596048981}
   - component: {fileID: 1596048986}
+  - component: {fileID: 1596048987}
   m_Layer: 0
   m_Name: Map
   m_TagString: Untagged
@@ -2075,11 +2117,15 @@ MonoBehaviour:
   height: 20
   yLevel: 0.18
   origin: {x: -5, y: 0, z: -3}
-  showGizmos: 1
-  showInScene: 1
-  showInGame: 1
+  showGizmos: 0
   lineColor: {r: 0, g: 0, b: 0, a: 1}
+  lineWidth: 0.02
   enforceUniqueAnchors: 1
+  drawInGame: 1
+  majorEvery: 5
+  minorColor: {r: 0, g: 0, b: 0, a: 1}
+  majorColor: {r: 0, g: 0, b: 0, a: 1}
+  zOffset: 0.01
 --- !u!64 &1596048982
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -2188,6 +2234,155 @@ MonoBehaviour:
   filter: -65535
   m_SourceCollider: {fileID: 1596048982}
   m_DistanceField: {fileID: 0}
+--- !u!120 &1596048987
+LineRenderer:
+  serializedVersion: 2
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1596048980}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 0
+  m_LightProbeUsage: 0
+  m_ReflectionProbeUsage: 0
+  m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 46370567}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_Positions:
+  - {x: -5.0399995, y: -4.3, z: -3.0089996}
+  - {x: -5.0399995, y: -4.3, z: 7.070999}
+  - {x: -4.0399995, y: -4.3, z: -3.0089996}
+  - {x: -4.0399995, y: -4.3, z: 7.070999}
+  - {x: -3.0399995, y: -4.3, z: -3.0089996}
+  - {x: -3.0399995, y: -4.3, z: 7.070999}
+  - {x: -2.0399995, y: -4.3, z: -3.0089996}
+  - {x: -2.0399995, y: -4.3, z: 7.070999}
+  - {x: -1.0399995, y: -4.3, z: -3.0089996}
+  - {x: -1.0399995, y: -4.3, z: 7.070999}
+  - {x: -0.039999485, y: -4.3, z: -3.0089996}
+  - {x: -0.039999485, y: -4.3, z: 7.070999}
+  - {x: 0.9600005, y: -4.3, z: -3.0089996}
+  - {x: 0.9600005, y: -4.3, z: 7.070999}
+  - {x: 1.9600005, y: -4.3, z: -3.0089996}
+  - {x: 1.9600005, y: -4.3, z: 7.070999}
+  - {x: 2.9600005, y: -4.3, z: -3.0089996}
+  - {x: 2.9600005, y: -4.3, z: 7.070999}
+  - {x: 3.9600005, y: -4.3, z: -3.0089996}
+  - {x: 3.9600005, y: -4.3, z: 7.070999}
+  - {x: 4.9600005, y: -4.3, z: -3.0089996}
+  - {x: 4.9600005, y: -4.3, z: 7.070999}
+  - {x: -5.0399995, y: -4.3, z: -3.0089996}
+  - {x: 5.0399995, y: -4.3, z: -3.0089996}
+  - {x: -5.0399995, y: -4.3, z: -2.0089996}
+  - {x: 5.0399995, y: -4.3, z: -2.0089996}
+  - {x: -5.0399995, y: -4.3, z: -1.0089996}
+  - {x: 5.0399995, y: -4.3, z: -1.0089996}
+  - {x: -5.0399995, y: -4.3, z: -0.008999586}
+  - {x: 5.0399995, y: -4.3, z: -0.008999586}
+  - {x: -5.0399995, y: -4.3, z: 0.9910004}
+  - {x: 5.0399995, y: -4.3, z: 0.9910004}
+  - {x: -5.0399995, y: -4.3, z: 1.9910004}
+  - {x: 5.0399995, y: -4.3, z: 1.9910004}
+  - {x: -5.0399995, y: -4.3, z: 2.9910004}
+  - {x: 5.0399995, y: -4.3, z: 2.9910004}
+  - {x: -5.0399995, y: -4.3, z: 3.9910004}
+  - {x: 5.0399995, y: -4.3, z: 3.9910004}
+  - {x: -5.0399995, y: -4.3, z: 4.991}
+  - {x: 5.0399995, y: -4.3, z: 4.991}
+  - {x: -5.0399995, y: -4.3, z: 5.991}
+  - {x: 5.0399995, y: -4.3, z: 5.991}
+  - {x: -5.0399995, y: -4.3, z: 6.991}
+  - {x: 5.0399995, y: -4.3, z: 6.991}
+  m_Parameters:
+    serializedVersion: 3
+    widthMultiplier: 0.02
+    widthCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    colorGradient:
+      serializedVersion: 2
+      key0: {r: 1, g: 1, b: 1, a: 1}
+      key1: {r: 1, g: 1, b: 1, a: 1}
+      key2: {r: 0, g: 0, b: 0, a: 0}
+      key3: {r: 0, g: 0, b: 0, a: 0}
+      key4: {r: 0, g: 0, b: 0, a: 0}
+      key5: {r: 0, g: 0, b: 0, a: 0}
+      key6: {r: 0, g: 0, b: 0, a: 0}
+      key7: {r: 0, g: 0, b: 0, a: 0}
+      ctime0: 0
+      ctime1: 65535
+      ctime2: 0
+      ctime3: 0
+      ctime4: 0
+      ctime5: 0
+      ctime6: 0
+      ctime7: 0
+      atime0: 0
+      atime1: 65535
+      atime2: 0
+      atime3: 0
+      atime4: 0
+      atime5: 0
+      atime6: 0
+      atime7: 0
+      m_Mode: 0
+      m_ColorSpace: -1
+      m_NumColorKeys: 2
+      m_NumAlphaKeys: 2
+    numCornerVertices: 0
+    numCapVertices: 0
+    alignment: 0
+    textureMode: 0
+    textureScale: {x: 1, y: 1}
+    shadowBias: 0.5
+    generateLightingData: 0
+  m_MaskInteraction: 0
+  m_UseWorldSpace: 1
+  m_Loop: 0
+  m_ApplyActiveColorSpace: 1
 --- !u!1 &1611423289
 GameObject:
   m_ObjectHideFlags: 0
@@ -2284,7 +2479,7 @@ MonoBehaviour:
   decimation: 0
   smoothing: 0
   twist: 0
-  indexInSystem: 1
+  indexInSystem: 2
 --- !u!114 &1611423295
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2298,112 +2493,112 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   solverIndices:
-    serializedContents: 790000007a0000007b0000007c0000007d0000007e0000007f000000800000008100000082000000830000008400000085000000860000008700000088000000890000008a0000008b0000008c0000008d0000008e0000008f000000900000009100000092000000930000009400000095000000960000009700000098000000990000009a0000009b0000009c0000009d0000009e0000009f000000a0000000a1000000a2000000a3000000a4000000a5000000a6000000a7000000a8000000a9000000aa000000ab000000ac000000ad000000ae000000af000000b0000000b1000000b2000000b3000000b4000000b5000000b6000000b7000000b8000000b9000000ba000000bb000000bc000000bd000000be000000bf000000c0000000c1000000c2000000c3000000c4000000c5000000c6000000c7000000c8000000c9000000ca000000cb000000cc000000cd000000ce000000cf000000d0000000d1000000d2000000d3000000d4000000d5000000d6000000d7000000d8000000d9000000da000000db000000dc000000dd000000de000000df000000e0000000e1000000e2000000e3000000e4000000e5000000e6000000e7000000e8000000e9000000ea000000eb000000ec000000ed000000ee000000ef000000f0000000f1000000
+    serializedContents: f2000000f3000000f4000000f5000000f6000000f7000000f8000000f9000000fa000000fb000000fc000000fd000000fe000000ff000000000100000101000002010000030100000401000005010000060100000701000008010000090100000a0100000b0100000c0100000d0100000e0100000f010000100100001101000012010000130100001401000015010000160100001701000018010000190100001a0100001b0100001c0100001d0100001e0100001f010000200100002101000022010000230100002401000025010000260100002701000028010000290100002a0100002b0100002c0100002d0100002e0100002f010000300100003101000032010000330100003401000035010000360100003701000038010000390100003a0100003b0100003c0100003d0100003e0100003f010000400100004101000042010000430100004401000045010000460100004701000048010000490100004a0100004b0100004c0100004d0100004e0100004f010000500100005101000052010000530100005401000055010000560100005701000058010000590100005a0100005b0100005c0100005d0100005e0100005f010000600100006101000062010000630100006401000065010000660100006701000068010000690100006a010000
     m_AlignBytes: 16
-  groupID: 2
+  groupID: 3
   m_CollisionMaterial: {fileID: 11400000, guid: d368f2c47473d4bfb8dd9f08073cb403, type: 2}
   m_SurfaceCollisions: 1
   m_MassScale: 1
   m_SelfCollisions: 1
   restLength_: 1.9999998
   elements:
-  - particle1: 121
-    particle2: 122
+  - particle1: 242
+    particle2: 243
     restLength: 0.09811282
     constraintForce: 0
     tearResistance: 1
-  - particle1: 122
-    particle2: 123
+  - particle1: 243
+    particle2: 244
     restLength: 0.100287914
     constraintForce: 0
     tearResistance: 1
-  - particle1: 123
-    particle2: 124
+  - particle1: 244
+    particle2: 245
     restLength: 0.100473166
     constraintForce: 0
     tearResistance: 1
-  - particle1: 124
-    particle2: 125
+  - particle1: 245
+    particle2: 246
     restLength: 0.100075066
     constraintForce: 0
     tearResistance: 1
-  - particle1: 125
-    particle2: 126
+  - particle1: 246
+    particle2: 247
     restLength: 0.1000461
     constraintForce: 0
     tearResistance: 1
-  - particle1: 126
-    particle2: 127
+  - particle1: 247
+    particle2: 248
     restLength: 0.10023159
     constraintForce: 0
     tearResistance: 1
-  - particle1: 127
-    particle2: 128
+  - particle1: 248
+    particle2: 249
     restLength: 0.10040283
     constraintForce: 0
     tearResistance: 1
-  - particle1: 128
-    particle2: 129
+  - particle1: 249
+    particle2: 250
     restLength: 0.10034485
     constraintForce: 0
     tearResistance: 1
-  - particle1: 129
-    particle2: 130
+  - particle1: 250
+    particle2: 251
     restLength: 0.09984174
     constraintForce: 0
     tearResistance: 1
-  - particle1: 130
-    particle2: 131
+  - particle1: 251
+    particle2: 252
     restLength: 0.10018619
     constraintForce: 0
     tearResistance: 1
-  - particle1: 131
-    particle2: 132
+  - particle1: 252
+    particle2: 253
     restLength: 0.100174226
     constraintForce: 0
     tearResistance: 1
-  - particle1: 132
-    particle2: 133
+  - particle1: 253
+    particle2: 254
     restLength: 0.09983422
     constraintForce: 0
     tearResistance: 1
-  - particle1: 133
-    particle2: 134
+  - particle1: 254
+    particle2: 255
     restLength: 0.10038936
     constraintForce: 0
     tearResistance: 1
-  - particle1: 134
-    particle2: 135
+  - particle1: 255
+    particle2: 256
     restLength: 0.100387245
     constraintForce: 0
     tearResistance: 1
-  - particle1: 135
-    particle2: 136
+  - particle1: 256
+    particle2: 257
     restLength: 0.10020301
     constraintForce: 0
     tearResistance: 1
-  - particle1: 136
-    particle2: 137
+  - particle1: 257
+    particle2: 258
     restLength: 0.10001254
     constraintForce: 0
     tearResistance: 1
-  - particle1: 137
-    particle2: 138
+  - particle1: 258
+    particle2: 259
     restLength: 0.100052536
     constraintForce: 0
     tearResistance: 1
-  - particle1: 138
-    particle2: 139
+  - particle1: 259
+    particle2: 260
     restLength: 0.100491166
     constraintForce: 0
     tearResistance: 1
-  - particle1: 139
-    particle2: 140
+  - particle1: 260
+    particle2: 261
     restLength: 0.10039204
     constraintForce: 0
     tearResistance: 1
-  - particle1: 140
-    particle2: 141
+  - particle1: 261
+    particle2: 262
     restLength: 0.09806138
     constraintForce: 0
     tearResistance: 1
@@ -2557,7 +2752,7 @@ MonoBehaviour:
   decimation: 0
   smoothing: 0
   twist: 0
-  indexInSystem: 2
+  indexInSystem: 1
 --- !u!114 &1728458358
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2571,112 +2766,112 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   solverIndices:
-    serializedContents: f2000000f3000000f4000000f5000000f6000000f7000000f8000000f9000000fa000000fb000000fc000000fd000000fe000000ff000000000100000101000002010000030100000401000005010000060100000701000008010000090100000a0100000b0100000c0100000d0100000e0100000f010000100100001101000012010000130100001401000015010000160100001701000018010000190100001a0100001b0100001c0100001d0100001e0100001f010000200100002101000022010000230100002401000025010000260100002701000028010000290100002a0100002b0100002c0100002d0100002e0100002f010000300100003101000032010000330100003401000035010000360100003701000038010000390100003a0100003b0100003c0100003d0100003e0100003f010000400100004101000042010000430100004401000045010000460100004701000048010000490100004a0100004b0100004c0100004d0100004e0100004f010000500100005101000052010000530100005401000055010000560100005701000058010000590100005a0100005b0100005c0100005d0100005e0100005f010000600100006101000062010000630100006401000065010000660100006701000068010000690100006a010000
+    serializedContents: 790000007a0000007b0000007c0000007d0000007e0000007f000000800000008100000082000000830000008400000085000000860000008700000088000000890000008a0000008b0000008c0000008d0000008e0000008f000000900000009100000092000000930000009400000095000000960000009700000098000000990000009a0000009b0000009c0000009d0000009e0000009f000000a0000000a1000000a2000000a3000000a4000000a5000000a6000000a7000000a8000000a9000000aa000000ab000000ac000000ad000000ae000000af000000b0000000b1000000b2000000b3000000b4000000b5000000b6000000b7000000b8000000b9000000ba000000bb000000bc000000bd000000be000000bf000000c0000000c1000000c2000000c3000000c4000000c5000000c6000000c7000000c8000000c9000000ca000000cb000000cc000000cd000000ce000000cf000000d0000000d1000000d2000000d3000000d4000000d5000000d6000000d7000000d8000000d9000000da000000db000000dc000000dd000000de000000df000000e0000000e1000000e2000000e3000000e4000000e5000000e6000000e7000000e8000000e9000000ea000000eb000000ec000000ed000000ee000000ef000000f0000000f1000000
     m_AlignBytes: 16
-  groupID: 3
+  groupID: 2
   m_CollisionMaterial: {fileID: 11400000, guid: d368f2c47473d4bfb8dd9f08073cb403, type: 2}
   m_SurfaceCollisions: 1
   m_MassScale: 1
   m_SelfCollisions: 1
   restLength_: 1.9999998
   elements:
-  - particle1: 242
-    particle2: 243
+  - particle1: 121
+    particle2: 122
     restLength: 0.09811282
     constraintForce: 0
     tearResistance: 1
-  - particle1: 243
-    particle2: 244
+  - particle1: 122
+    particle2: 123
     restLength: 0.100287914
     constraintForce: 0
     tearResistance: 1
-  - particle1: 244
-    particle2: 245
+  - particle1: 123
+    particle2: 124
     restLength: 0.100473166
     constraintForce: 0
     tearResistance: 1
-  - particle1: 245
-    particle2: 246
+  - particle1: 124
+    particle2: 125
     restLength: 0.100075066
     constraintForce: 0
     tearResistance: 1
-  - particle1: 246
-    particle2: 247
+  - particle1: 125
+    particle2: 126
     restLength: 0.1000461
     constraintForce: 0
     tearResistance: 1
-  - particle1: 247
-    particle2: 248
+  - particle1: 126
+    particle2: 127
     restLength: 0.10023159
     constraintForce: 0
     tearResistance: 1
-  - particle1: 248
-    particle2: 249
+  - particle1: 127
+    particle2: 128
     restLength: 0.10040283
     constraintForce: 0
     tearResistance: 1
-  - particle1: 249
-    particle2: 250
+  - particle1: 128
+    particle2: 129
     restLength: 0.10034485
     constraintForce: 0
     tearResistance: 1
-  - particle1: 250
-    particle2: 251
+  - particle1: 129
+    particle2: 130
     restLength: 0.09984174
     constraintForce: 0
     tearResistance: 1
-  - particle1: 251
-    particle2: 252
+  - particle1: 130
+    particle2: 131
     restLength: 0.10018619
     constraintForce: 0
     tearResistance: 1
-  - particle1: 252
-    particle2: 253
+  - particle1: 131
+    particle2: 132
     restLength: 0.100174226
     constraintForce: 0
     tearResistance: 1
-  - particle1: 253
-    particle2: 254
+  - particle1: 132
+    particle2: 133
     restLength: 0.09983422
     constraintForce: 0
     tearResistance: 1
-  - particle1: 254
-    particle2: 255
+  - particle1: 133
+    particle2: 134
     restLength: 0.10038936
     constraintForce: 0
     tearResistance: 1
-  - particle1: 255
-    particle2: 256
+  - particle1: 134
+    particle2: 135
     restLength: 0.100387245
     constraintForce: 0
     tearResistance: 1
-  - particle1: 256
-    particle2: 257
+  - particle1: 135
+    particle2: 136
     restLength: 0.10020301
     constraintForce: 0
     tearResistance: 1
-  - particle1: 257
-    particle2: 258
+  - particle1: 136
+    particle2: 137
     restLength: 0.10001254
     constraintForce: 0
     tearResistance: 1
-  - particle1: 258
-    particle2: 259
+  - particle1: 137
+    particle2: 138
     restLength: 0.100052536
     constraintForce: 0
     tearResistance: 1
-  - particle1: 259
-    particle2: 260
+  - particle1: 138
+    particle2: 139
     restLength: 0.100491166
     constraintForce: 0
     tearResistance: 1
-  - particle1: 260
-    particle2: 261
+  - particle1: 139
+    particle2: 140
     restLength: 0.10039204
     constraintForce: 0
     tearResistance: 1
-  - particle1: 261
-    particle2: 262
+  - particle1: 140
+    particle2: 141
     restLength: 0.09806138
     constraintForce: 0
     tearResistance: 1
@@ -2744,4 +2939,4 @@ SceneRoots:
   - {fileID: 1512266838}
   - {fileID: 1328712776}
   - {fileID: 1393621201}
-  - {fileID: 88640196}
+  - {fileID: 327672212}

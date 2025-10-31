@@ -16,15 +16,20 @@ public class GridPlane : MonoBehaviour
     public Vector3 origin = Vector3.zero;
     public bool showGizmos = true;
 
-    [Header("Visuals")]
-    public bool showInScene = true;
-    public bool showInGame = true;
-    public Color lineColor = new Color(1, 1, 1, 0.25f);
+    [Header("Style")]
+    public Color lineColor = new Color(1, 1, 1, 0.15f);
+    public float lineWidth = 0.02f;
 
-    private Material lineMat;
+    private LineRenderer lineRenderer;
+    private List<Vector3> points = new List<Vector3>();
     [Header("Occupancy (chống trùng ô)")]
     public bool enforceUniqueAnchors = true;
-
+    [Header("Runtime Render (Game view)")]
+    public bool drawInGame = true;            // Bật để vẽ trong Game view
+    public int majorEvery = 5;               // 0 = tắt vạch đậm
+    public Color minorColor = new Color(1, 1, 1, 0.18f);
+    public Color majorColor = new Color(1, 1, 1, 0.35f);
+    public float zOffset = 0.001f;
     // Lưu chỗ đã có anchor
     private readonly Dictionary<Vector2Int, Transform> _occupancy = new();
 
@@ -33,14 +38,6 @@ public class GridPlane : MonoBehaviour
 
     void Start()
     {
-        Shader shader = Shader.Find("Hidden/Internal-Colored");
-        lineMat = new Material(shader) { hideFlags = HideFlags.HideAndDontSave };
-        lineMat.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
-        lineMat.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
-        lineMat.SetInt("_Cull", (int)UnityEngine.Rendering.CullMode.Off);
-        lineMat.SetInt("_ZWrite", 0);
-        lineMat.SetInt("_ZTest", (int)UnityEngine.Rendering.CompareFunction.Always); // 👈 vẽ đè lên trên
-
     }
 
     public Vector2Int WorldToCell(Vector3 world)
@@ -116,31 +113,57 @@ public class GridPlane : MonoBehaviour
         Gizmos.DrawLine(p0, p1); Gizmos.DrawLine(p1, p2);
         Gizmos.DrawLine(p2, p3); Gizmos.DrawLine(p3, p0);
     }
+    static Material _mat;
+    static Material RuntimeMat
+    {
+        get
+        {
+#if UNITY_URP || UNITY_RENDER_PIPELINE_UNIVERSAL
+            if (_mat == null) _mat = new Material(Shader.Find("Universal Render Pipeline/Unlit"));
+#else
+            if (_mat == null) _mat = new Material(Shader.Find("Hidden/Internal-Colored"));
+#endif
+            _mat.hideFlags = HideFlags.HideAndDontSave;
+            _mat.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+            _mat.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+            _mat.SetInt("_ZWrite", 0); // không ghi depth -> trong suốt đẹp hơn
+            return _mat;
+        }
+    }
+
+    // Vẽ vào mọi camera khi render (cả Play lẫn khi đang ở Editor Game view)
     void OnRenderObject()
     {
-        if (!showInGame || !Application.isPlaying || lineMat == null)
-            return;
+        if (!drawInGame || cellSize <= 0f || width <= 0 || height <= 0) return;
 
-        lineMat.SetPass(0);
+        Vector3 start = new Vector3(origin.x, yLevel + zOffset, origin.z);
+        float W = width * cellSize;
+        float H = height * cellSize;
+
+        RuntimeMat.SetPass(0);
         GL.PushMatrix();
-        GL.MultMatrix(Matrix4x4.identity);
         GL.Begin(GL.LINES);
-        GL.Color(lineColor);
 
+        // các đường dọc
         for (int x = 0; x <= width; x++)
         {
-            Vector3 start = origin + new Vector3(x * cellSize, yLevel, 0);
-            Vector3 end = origin + new Vector3(x * cellSize, yLevel, height * cellSize);
-            GL.Vertex(start);
-            GL.Vertex(end);
+            bool isMajor = majorEvery > 0 && (x % majorEvery == 0);
+            GL.Color(isMajor ? majorColor : minorColor);
+
+            float xPos = start.x + x * cellSize;
+            GL.Vertex3(xPos, start.y, start.z);
+            GL.Vertex3(xPos, start.y, start.z + H);
         }
 
+        // các đường ngang
         for (int z = 0; z <= height; z++)
         {
-            Vector3 start = origin + new Vector3(0, yLevel, z * cellSize);
-            Vector3 end = origin + new Vector3(width * cellSize, yLevel, z * cellSize);
-            GL.Vertex(start);
-            GL.Vertex(end);
+            bool isMajor = majorEvery > 0 && (z % majorEvery == 0);
+            GL.Color(isMajor ? majorColor : minorColor);
+
+            float zPos = start.z + z * cellSize;
+            GL.Vertex3(start.x, start.y, zPos);
+            GL.Vertex3(start.x + W, start.y, zPos);
         }
 
         GL.End();
