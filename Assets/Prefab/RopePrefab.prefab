@@ -123,11 +123,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   grid: {fileID: 0}
-  ropeCut: {fileID: 0}
-  clampBeforeCut: 0
+  ropeHitTester: {fileID: 0}
+  ownerRoot: {fileID: 0}
   extraOffset: {x: 0, y: 0, z: 0}
   forbidCornerCut: 1
   bottomExtraOffset: 0
+  projectToGridPlane: 1
+  clampBeforeCut: 0
+  clampBinarySteps: 12
   obstacleTag: Obstacle
   obstacleProbeHeight: 5
 --- !u!114 &7728757982437694689
@@ -142,7 +145,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 19c4b636ce46b4e439734898e2542b1f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  grid: {fileID: 0}
 --- !u!1 &3711786352888855480
 GameObject:
   m_ObjectHideFlags: 0
@@ -158,6 +160,7 @@ GameObject:
   - component: {fileID: 6254091371605115107}
   - component: {fileID: 8961394041187306701}
   - component: {fileID: 2628382361506444128}
+  - component: {fileID: 7603113669192349846}
   m_Layer: 0
   m_Name: RopePrefab
   m_TagString: Untagged
@@ -381,6 +384,24 @@ MonoBehaviour:
   m_ConstrainOrientation: 0
   m_Compliance: 0
   breakThreshold: Infinity
+--- !u!114 &7603113669192349846
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3711786352888855480}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd6700c9224f8c04ca9e63edcf5e0d70, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rope: {fileID: 3229705142485188974}
+  grid: {fileID: 0}
+  acceptHeight: 0
+  ropeRadius: 0.5
+  owner: {fileID: 2138993142037489268}
+  liveUpdate: 1
 --- !u!1 &7608381448747003014
 GameObject:
   m_ObjectHideFlags: 0
@@ -483,11 +504,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   grid: {fileID: 0}
-  ropeCut: {fileID: 0}
-  clampBeforeCut: 0
+  ropeHitTester: {fileID: 0}
+  ownerRoot: {fileID: 2138993142037489268}
   extraOffset: {x: 0, y: 0, z: 0}
   forbidCornerCut: 1
   bottomExtraOffset: 0
+  projectToGridPlane: 1
+  clampBeforeCut: 0
+  clampBinarySteps: 12
   obstacleTag: Obstacle
   obstacleProbeHeight: 5
 --- !u!65 &4499961823735444049
@@ -523,4 +547,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 19c4b636ce46b4e439734898e2542b1f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  grid: {fileID: 0}
