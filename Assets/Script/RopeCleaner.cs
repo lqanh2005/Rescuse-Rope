@@ -33,7 +33,6 @@ public class RopeCleaner : MonoBehaviour
             if (r == null) continue;
 
             listMau.Remove(r);
-            Debug.Log($"❌ Xoá rope {r.name} (không còn va chạm)");
             r.gameObject.SetActive(false);
         }
     }

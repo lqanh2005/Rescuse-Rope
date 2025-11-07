@@ -83,7 +83,6 @@ public class RopeRopeCollisionDetector : MonoBehaviour
                 if (particleInActorA != null && particleInActorB != null && particleInActorA.actor != particleInActorB.actor)
                 {
                     callback.Invoke(new ActorPair(particleInActorA.actor, particleInActorB.actor, particleA, particleB));
-                    Debug.Log("Rope Dectect");
                 }
             }
         }

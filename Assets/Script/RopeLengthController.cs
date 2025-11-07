@@ -14,23 +14,22 @@ public class RopeLengthController : MonoBehaviour
     {
         cursor = GetComponentInChildren<ObiRopeCursor>();
         rope = cursor.GetComponent<ObiRope>();
-        Debug.LogError("Rope rest length at start: " + rope.restLength);
     }
 
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.W))
         {
-            Debug.LogError("Rope rest length before change: " + rope.restLength);
+            Debug.Log("Rope rest length before change: " + rope.restLength);
             cursor.ChangeLength(-speed); 
-            Debug.LogError("Rope rest length after change: " + rope.restLength);
-            Debug.LogError("W");
+            Debug.Log("Rope rest length after change: " + rope.restLength);
+            Debug.Log("W");
         }
 
         if (Input.GetKeyDown(KeyCode.S))
         {
             cursor.ChangeLength(speed); 
-            Debug.LogError("S");
+            Debug.Log("S");
         }
     }
 }
