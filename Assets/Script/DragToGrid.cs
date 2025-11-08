@@ -68,5 +68,6 @@ public class DragToGrid : MonoBehaviour
         if (!_dragging) return;
         _dragging = false;
         grid.Occupy(_lastCell, owner); // chiếm lại ô cuối
+        RopeCleaner.instance.Check();
     }
 }
