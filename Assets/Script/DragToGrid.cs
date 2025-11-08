@@ -11,6 +11,7 @@ public class DragToGrid : MonoBehaviour
     private bool _dragging;
     private Vector2Int _lastCell;
     private Vector2Int _startCell;
+    const string ObstacleTag = "Obstacle";
 
     void Awake()
     {
@@ -41,6 +42,7 @@ public class DragToGrid : MonoBehaviour
 
         // 2) Cell hiện tại của object
         Vector2Int current = grid.WorldToCell(transform.position);
+        if(GridMap.Instance.IsObstacleCell(target, owner)) return;
 
         // 3) Tìm ô “cuối cùng còn trống” dọc đường current → target, BỎ QUA chính mình
         Vector2Int reachable = GridMap.Instance.LastFreeBeforeBlocked(current, target, ignoreOwner: owner);
@@ -70,4 +72,5 @@ public class DragToGrid : MonoBehaviour
         grid.Occupy(_lastCell, owner); // chiếm lại ô cuối
         RopeCleaner.instance.Check();
     }
+
 }

@@ -17,6 +17,7 @@ public class GridMap : MonoBehaviour
     public float cellSize = 0.5f;
     public float yLevel = 0f;
     public Vector3 origin = Vector3.zero;
+    const string ObstacleTag = "Obstacle";
 
     [Header("Gizmos (Editor)")]
     public bool showGridLines = true;
@@ -151,10 +152,19 @@ public class GridMap : MonoBehaviour
     public Vector2Int LastFreeBeforeBlocked(Vector2Int start, Vector2Int end, object ignoreOwner)
     {
         Vector2Int lastFree = start;
-        foreach (var c in LineCells(start, end))
+        foreach (var c in LineCells(start, end)) // dùng hàm DDA line đã có trong code bạn
         {
+            if (c == start) continue;
+
+            // Bị Obstacle? cấm qua (bỏ qua chính mình nếu có)
+            Transform ignoreTransform = ignoreOwner as Transform;
+            if (IsObstacleCell(c, ignoreTransform)) break;
+
+            // Bị chiếm (khác owner của mình)? cấm qua
             if (IsOccupied(c, ignoreOwner)) break;
+
             lastFree = c;
+            if (c == end) break;
         }
         return lastFree;
     }
@@ -175,20 +185,49 @@ public class GridMap : MonoBehaviour
             if (e2 < dx) { err += dx; y += sy; }
         }
     }
-    private void Increment(Vector2Int c)
+    public bool IsObstacleCell(Vector2Int cell, Transform ignoreOwner = null)
     {
-        counts.TryGetValue(c, out int v);
-        v++;
-        counts[c] = v;
+        // Kiểm tra trong occupancy trước
+        if (TryGetOwner(cell, out var owner, ignoreOwner))
+        {
+            if (owner != null && owner.CompareTag(ObstacleTag)) return true;
+        }
+        
+        // Nếu không tìm thấy trong occupancy, tìm trực tiếp trong scene
+        // (trường hợp obstacle chưa được đăng ký vào GridMap)
+        Vector3 cellCenter = CellToWorldCenter(cell);
+        Collider[] colliders = Physics.OverlapSphere(cellCenter, cellSize * 0.4f);
+        foreach (var col in colliders)
+        {
+            if (col == null) continue;
+            // Bỏ qua chính mình nếu có ignoreOwner
+            if (ignoreOwner != null && col.transform == ignoreOwner) continue;
+            if (col.CompareTag(ObstacleTag))
+            {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    public bool TryGetOwner(Vector2Int cell, out Transform owner, Transform ignoreOwner = null)
+    {
+        owner = null;
+
+        if (_occ.TryGetValue(cell, out var set) && set != null)
+        {
+            foreach (var t in set)
+            {
+                if (t == null) continue;
+                if (t == ignoreOwner) continue;   // BỎ QUA CHÍNH MÌNH
+                owner = t;
+                return true;
+            }
+        }
+
+        return false;
     }
 
-    private void Decrement(Vector2Int c)
-    {
-        if (!counts.TryGetValue(c, out int v)) return;
-        v--;
-        if (v <= 0) counts.Remove(c);
-        else counts[c] = v;
-    }
 
     public IEnumerable<object> GetOwnersAt(Vector2Int cell)
     {
