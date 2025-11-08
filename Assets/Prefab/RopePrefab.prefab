@@ -123,16 +123,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   grid: {fileID: 0}
-  ropeHitTester: {fileID: 0}
-  ownerRoot: {fileID: 0}
+  owner: {fileID: 2138993142037489268}
   extraOffset: {x: 0, y: 0, z: 0}
-  forbidCornerCut: 1
-  bottomExtraOffset: 0
-  projectToGridPlane: 1
-  clampBeforeCut: 0
-  clampBinarySteps: 12
-  obstacleTag: Obstacle
-  obstacleProbeHeight: 5
 --- !u!114 &7728757982437694689
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -204,7 +196,7 @@ MonoBehaviour:
   m_CollisionMaterial: {fileID: 0}
   m_SurfaceCollisions: 1
   m_MassScale: 1
-  m_SelfCollisions: 0
+  m_SelfCollisions: 1
   restLength_: 1.9999998
   elements:
   - particle1: 0
@@ -398,9 +390,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rope: {fileID: 3229705142485188974}
   grid: {fileID: 0}
+  owner: {fileID: 2138993142037489268}
   acceptHeight: 0
   ropeRadius: 0.5
-  owner: {fileID: 2138993142037489268}
   liveUpdate: 1
 --- !u!1 &7608381448747003014
 GameObject:
@@ -504,16 +496,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   grid: {fileID: 0}
-  ropeHitTester: {fileID: 0}
-  ownerRoot: {fileID: 2138993142037489268}
+  owner: {fileID: 2138993142037489268}
   extraOffset: {x: 0, y: 0, z: 0}
-  forbidCornerCut: 1
-  bottomExtraOffset: 0
-  projectToGridPlane: 1
-  clampBeforeCut: 0
-  clampBinarySteps: 12
-  obstacleTag: Obstacle
-  obstacleProbeHeight: 5
 --- !u!65 &4499961823735444049
 BoxCollider:
   m_ObjectHideFlags: 0
