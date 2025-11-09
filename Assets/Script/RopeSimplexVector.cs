@@ -85,7 +85,7 @@ public class RopeSimplexVector : MonoBehaviour
         if (pcount <= 0) return;
 
         // Nếu muốn bỏ qua hạt không hoạt động, bạn có thể dùng IsParticleActive(i) (nếu API có)
-        for (int i = 0; i < pcount; i++)
+        for (int i = 0; i < pcount-2; i++)
         {
             // Trả về world-space luôn, không cần solver.TransformPoint
             Vector3 wp = rope.GetParticlePosition(i);

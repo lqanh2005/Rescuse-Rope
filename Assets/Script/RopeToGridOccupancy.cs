@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
-using Obi;
-using System.Linq;
+﻿using Obi;
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
 
 [DefaultExecutionOrder(1000)] // chạy sau Obi
 [ExecuteAlways]
@@ -13,6 +14,7 @@ public class RopeToGridOccupancy : MonoBehaviour
     public GridMap grid;
     [Tooltip("Transform đại diện để chiếm ô (nên là rope.transform)")]
     public Transform owner;
+    public Transform anchorA, anchorB;
 
     [Header("Projection & Raster")]
     [Tooltip("0 = lấy toàn bộ; >0 chỉ nhận đoạn có ít nhất 1 đầu cách yLevel <= ngưỡng")]
@@ -38,45 +40,72 @@ public class RopeToGridOccupancy : MonoBehaviour
     }
     private void LateUpdate()
     {
-        MarkRopeCells();
-        if (liveUpdate && GridMap.Instance != null)
+        StartCoroutine(UpdateRopeCellsRoutine());
+
+    }
+    IEnumerator UpdateRopeCellsRoutine()
+    {
+        while (true)
         {
-            GridMap.Instance.ApplyOwner(transform, occupiedCells);
+            // 1) Chờ Physics + Obi Solver cập nhật xong frame này
+            yield return new WaitForFixedUpdate();
+
+            // 2) Bây giờ vị trí hạt đã đúng → tính cell
+            MarkRopeCells();
+            if (liveUpdate && GridMap.Instance != null)
+            {
+                GridMap.Instance.ApplyOwner(transform, occupiedCells);
+            }
+            // 3) (Tuỳ chọn) nếu bạn muốn update khớp hình luôn thì thêm
+            yield return null; // chờ sang frame render
         }
     }
     void MarkRopeCells()
     {
         occupiedCells.Clear();
-        if (rope == null || grid == null || rope.blueprint == null) return;
+        if (!rope || !grid || rope.blueprint == null) return;
 
         var solver = rope.solver;
         var ids = rope.solverIndices;
+        if (solver == null || ids == null || rope.activeParticleCount < 2 || solver.positions.count == 0) return;
 
-        // Ưu tiên solver (chính xác vị trí particle)
-        if (solver != null && ids != null && ids.Count() > 1 && solver.positions.Count() > 0)
+        // A) nối từ anchor A → hạt đầu
+        if (anchorA)
         {
-            for (int i = 0; i < ids.Count() - 1; i++)
+            int first = ids[0];
+            if (first >= 0 && first < solver.positions.count)
             {
-                int a = ids[i], b = ids[i + 1];
-                if (a < 0 || b < 0 || a >= solver.positions.Count() || b >= solver.positions.Count()) continue;
-                RasterizeSegment(solver.positions[a], solver.positions[b], occupiedCells);
+                Vector3 pFirst = solver.transform.TransformPoint(solver.positions[first]);
+                RasterizeSegment(anchorA.position, pFirst, occupiedCells);
             }
         }
-        else
+
+        // B) các đoạn giữa hạt (solver → world ở cả hai đầu)
+        for (int i = 0; i < rope.activeParticleCount - 1; i++)
         {
-            // Fallback theo actor-space nếu solver chưa sẵn sàng
-            int n = rope.particleCount;
-            for (int i = 0; i < n - 1; i++)
+            int a = ids[i], b = ids[i + 1];
+            if (a < 0 || b < 0 || a >= solver.positions.count || b >= solver.positions.count) continue;
+            Vector3 p1 = solver.transform.TransformPoint(solver.positions[a]);
+            Vector3 p2 = solver.transform.TransformPoint(solver.positions[b]);
+            RasterizeSegment(p1, p2, occupiedCells);
+        }
+
+        // C) nối từ hạt cuối → anchor B
+        if (anchorB)
+        {
+            int last = ids[rope.activeParticleCount - 1];
+            if (last >= 0 && last < solver.positions.count)
             {
-                var p1 = rope.transform.TransformPoint(rope.GetParticlePosition(i));
-                var p2 = rope.transform.TransformPoint(rope.GetParticlePosition(i + 1));
-                RasterizeSegment(p1, p2, occupiedCells);
+                Vector3 pLast = solver.transform.TransformPoint(solver.positions[last]);
+                RasterizeSegment(pLast, anchorB.position, occupiedCells);
             }
         }
     }
+    const float kMinSegLen2 = 1e-6f;
     static void RasterizeSegment(Vector3 w1, Vector3 w2, HashSet<Vector2Int> dst)
     {
         var gp = GridMap.Instance;
+        if ((w2 - w1).sqrMagnitude < kMinSegLen2) return;
         var c1 = gp.WorldToCell(w1);
         var c2 = gp.WorldToCell(w2);
 
@@ -91,44 +120,6 @@ public class RopeToGridOccupancy : MonoBehaviour
         {
             dst.Add(new Vector2Int(x, y));
             if (x == c2.x && y == c2.y) break;
-            int e2 = 2 * err;
-            if (e2 > -dy) { err -= dy; x += sx; }
-            if (e2 < dx) { err += dx; y += sy; }
-        }
-    }
-    int SafeCount<T>(Obi.ObiNativeList<T> list) where T : struct
-    {
-        // ObiNativeList has field/properties Count or count depending on version; if your project only has one, simplify this.
-        try { return list.Count(); } catch { }
-        try { return list.count; } catch { }
-        return 0;
-    }
-
-    void RasterizeSegment(Vector3 p1, Vector3 p2)
-    {
-        Vector2Int c1 = grid.WorldToCell(p1);
-        Vector2Int c2 = grid.WorldToCell(p2);
-
-        foreach (var cell in GridLineCells(c1, c2))
-            occupiedCells.Add(cell);
-    }
-
-    // DDA line rasterization (không cần thư viện ngoài)
-    IEnumerable<Vector2Int> GridLineCells(Vector2Int start, Vector2Int end)
-    {
-        int dx = Mathf.Abs(end.x - start.x);
-        int dy = Mathf.Abs(end.y - start.y);
-        int sx = start.x < end.x ? 1 : -1;
-        int sy = start.y < end.y ? 1 : -1;
-        int err = dx - dy;
-
-        int x = start.x, y = start.y;
-
-        while (true)
-        {
-            yield return new Vector2Int(x, y);
-            if (x == end.x && y == end.y) break;
-
             int e2 = 2 * err;
             if (e2 > -dy) { err -= dy; x += sx; }
             if (e2 < dx) { err += dx; y += sy; }

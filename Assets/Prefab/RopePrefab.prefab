@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 1537728784930734590}
   - component: {fileID: 417940805537565892}
   - component: {fileID: 6775741929396087330}
-  - component: {fileID: 7728757982437694689}
+  - component: {fileID: 8791274129261240983}
   m_Layer: 3
   m_Name: Anchor_B
   m_TagString: Obstacle
@@ -29,9 +29,9 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2858934343972088243}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.2500243, y: 0.030000001, z: -0.006303072}
-  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 1.1882638, y: 0.035294116, z: -0.0074153785}
+  m_LocalScale: {x: 0.58823526, y: 0.58823526, z: 0.58823526}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 2138993142037489268}
@@ -108,8 +108,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1.0000002, y: 1, z: 1.0000002}
-  m_Center: {x: 0.00000023841858, y: 0, z: 0}
+  m_Size: {x: 0.9, y: 1, z: 1.0000002}
+  m_Center: {x: 0.05, y: 0, z: 0}
 --- !u!114 &6775741929396087330
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -125,7 +125,7 @@ MonoBehaviour:
   grid: {fileID: 0}
   owner: {fileID: 2138993142037489268}
   extraOffset: {x: 0, y: 0, z: 0}
---- !u!114 &7728757982437694689
+--- !u!114 &8791274129261240983
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -134,9 +134,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 2858934343972088243}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 19c4b636ce46b4e439734898e2542b1f, type: 3}
+  m_Script: {fileID: 11500000, guid: 6757b231cedd544c583ef8aeaf773b2a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  thickness: 0
+  inverted: 0
+  material: {fileID: 0}
+  filter: -65535
+  m_SourceCollider: {fileID: 417940805537565892}
+  m_DistanceField: {fileID: 0}
 --- !u!1 &3711786352888855480
 GameObject:
   m_ObjectHideFlags: 0
@@ -168,15 +174,15 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3711786352888855480}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0.7221286, z: -0, w: -0.6917589}
-  m_LocalPosition: {x: -0.0052146777, y: 0.22, z: 0.83}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.53, y: 0.22, z: 2.51}
+  m_LocalScale: {x: 1.7, y: 1.7, z: 1.7}
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 806307157788660579}
   - {fileID: 6796043592869222213}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 267.539, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &3229705142485188974
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -190,78 +196,63 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   solverIndices:
-    serializedContents: 000000000100000002000000030000000400000005000000060000000700000008000000090000000a0000000b0000000c0000000d0000000e0000000f000000100000001100000012000000
+    serializedContents: 100000001100000012000000130000001400000015000000160000001700000018000000190000001a0000001b0000001c0000001d0000001e0000001f000000
     m_AlignBytes: 16
-  groupID: 1
+  groupID: 2
   m_CollisionMaterial: {fileID: 0}
   m_SurfaceCollisions: 1
   m_MassScale: 1
   m_SelfCollisions: 1
-  restLength_: 1.9999998
+  restLength_: 2
   elements:
-  - particle1: 0
-    particle2: 1
-    restLength: 0.15308028
+  - particle1: 16
+    particle2: 17
+    restLength: 0.19840074
     constraintForce: 0
     tearResistance: 1
-  - particle1: 1
-    particle2: 2
-    restLength: 0.15379
+  - particle1: 17
+    particle2: 18
+    restLength: 0.20054823
     constraintForce: 0
     tearResistance: 1
-  - particle1: 2
-    particle2: 3
-    restLength: 0.15383464
+  - particle1: 18
+    particle2: 19
+    restLength: 0.20027769
     constraintForce: 0
     tearResistance: 1
-  - particle1: 3
-    particle2: 4
-    restLength: 0.15390351
+  - particle1: 19
+    particle2: 20
+    restLength: 0.20074768
     constraintForce: 0
     tearResistance: 1
-  - particle1: 4
-    particle2: 5
-    restLength: 0.15424557
+  - particle1: 20
+    particle2: 21
+    restLength: 0.20002794
     constraintForce: 0
     tearResistance: 1
-  - particle1: 5
-    particle2: 6
-    restLength: 0.15415217
+  - particle1: 21
+    particle2: 22
+    restLength: 0.20000844
     constraintForce: 0
     tearResistance: 1
-  - particle1: 6
-    particle2: 7
-    restLength: 0.15397167
+  - particle1: 22
+    particle2: 23
+    restLength: 0.2007766
     constraintForce: 0
     tearResistance: 1
-  - particle1: 7
-    particle2: 8
-    restLength: 0.15414801
+  - particle1: 23
+    particle2: 24
+    restLength: 0.20021555
     constraintForce: 0
     tearResistance: 1
-  - particle1: 8
-    particle2: 9
-    restLength: 0.15426265
+  - particle1: 24
+    particle2: 25
+    restLength: 0.2005437
     constraintForce: 0
     tearResistance: 1
-  - particle1: 9
-    particle2: 10
-    restLength: 0.15395126
-    constraintForce: 0
-    tearResistance: 1
-  - particle1: 10
-    particle2: 11
-    restLength: 0.15369558
-    constraintForce: 0
-    tearResistance: 1
-  - particle1: 11
-    particle2: 12
-    restLength: 0.15398973
-    constraintForce: 0
-    tearResistance: 1
-  - particle1: 12
-    particle2: 13
-    restLength: 0.1529749
+  - particle1: 25
+    particle2: 26
+    restLength: 0.19845343
     constraintForce: 0
     tearResistance: 1
   _aerodynamicsEnabled: 1
@@ -321,7 +312,7 @@ MonoBehaviour:
   uvScale: {x: 1, y: 1}
   normalizeV: 1
   section: {fileID: 11400000, guid: a0bc36a59515f413e90e10895929c938, type: 2}
-  thicknessScale: 0.8
+  thicknessScale: 1.5
 --- !u!114 &6254091371605115107
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -353,7 +344,7 @@ MonoBehaviour:
   m_Actor: {fileID: 3229705142485188974}
   m_Target: {fileID: 806307157788660579}
   m_ParticleGroup: {fileID: -3896889355816421552, guid: 95429550f58ae564a9d55b97946e97f2, type: 2}
-  m_AttachmentType: 0
+  m_AttachmentType: 1
   m_ConstrainOrientation: 0
   m_Compliance: 0
   breakThreshold: Infinity
@@ -372,7 +363,7 @@ MonoBehaviour:
   m_Actor: {fileID: 3229705142485188974}
   m_Target: {fileID: 6796043592869222213}
   m_ParticleGroup: {fileID: -2179599449979434360, guid: 95429550f58ae564a9d55b97946e97f2, type: 2}
-  m_AttachmentType: 0
+  m_AttachmentType: 1
   m_ConstrainOrientation: 0
   m_Compliance: 0
   breakThreshold: Infinity
@@ -391,6 +382,8 @@ MonoBehaviour:
   rope: {fileID: 3229705142485188974}
   grid: {fileID: 0}
   owner: {fileID: 2138993142037489268}
+  anchorA: {fileID: 806307157788660579}
+  anchorB: {fileID: 6796043592869222213}
   acceptHeight: 0
   ropeRadius: 0.5
   liveUpdate: 1
@@ -407,7 +400,7 @@ GameObject:
   - component: {fileID: 6296981192368331916}
   - component: {fileID: 5541597419065936140}
   - component: {fileID: 4499961823735444049}
-  - component: {fileID: 692755017231797956}
+  - component: {fileID: 1895758171269255033}
   m_Layer: 3
   m_Name: Anchor_A
   m_TagString: Obstacle
@@ -423,9 +416,9 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7608381448747003014}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.7499673, y: 0.030000001, z: -0.012218118}
-  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -1.1646672, y: 0.035294116, z: -0.014374255}
+  m_LocalScale: {x: 0.58823526, y: 0.58823526, z: 0.58823526}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 2138993142037489268}
@@ -517,9 +510,9 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1.0000002, y: 1, z: 1.0000002}
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &692755017231797956
+  m_Size: {x: 0.9, y: 1, z: 1.0000002}
+  m_Center: {x: -0.06, y: 0, z: 0}
+--- !u!114 &1895758171269255033
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -528,6 +521,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 7608381448747003014}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 19c4b636ce46b4e439734898e2542b1f, type: 3}
+  m_Script: {fileID: 11500000, guid: 6757b231cedd544c583ef8aeaf773b2a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  thickness: 0
+  inverted: 0
+  material: {fileID: 0}
+  filter: -65535
+  m_SourceCollider: {fileID: 4499961823735444049}
+  m_DistanceField: {fileID: 0}

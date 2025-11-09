@@ -96,6 +96,7 @@ public class DraggableMultiCell : MonoBehaviour
     public void EndDrag()
     {
         _dragging = false;
+        RopeCleaner.instance.Check();
     }
 
     private bool RayToPlane(Camera cam, out Vector3 hit)
